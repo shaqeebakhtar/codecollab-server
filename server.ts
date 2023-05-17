@@ -40,6 +40,19 @@ io.on("connection", (socket) => {
       });
     });
   });
+
+  // on disconnecting
+  socket.on("disconnecting", () => {
+    const rooms = [...socket.rooms];
+    rooms.forEach((roomId) => {
+      socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+        socketId: socket.id,
+        collaboratorName: collaboratorSocketMap[socket.id],
+      });
+      socket.leave(roomId);
+    });
+    delete collaboratorSocketMap[socket.id];
+  });
 });
 
 httpServer.listen(PORT);
