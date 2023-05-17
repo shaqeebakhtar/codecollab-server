@@ -41,6 +41,14 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on(ACTIONS.CODE_CHANGE, ({ editorRoomId, code }) => {
+    socket.in(editorRoomId).emit(ACTIONS.CODE_CHANGE, { code });
+  });
+
+  socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+    io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
+  });
+
   // on disconnecting
   socket.on("disconnecting", () => {
     const rooms = [...socket.rooms];
